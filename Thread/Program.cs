@@ -1,4 +1,6 @@
-﻿namespace Threads
+﻿using System.Diagnostics;
+
+namespace Threads
 {
     internal class Program
     {
@@ -28,16 +30,17 @@
         {
             Console.WriteLine($"Начата обработка {dataName}");
 
-            DateTime start = DateTime.UtcNow;
-            Thread.Sleep(3000);
-            DateTime end = DateTime.UtcNow;
 
-            return $"Обработка {dataName} завершена за {(end-start).TotalSeconds} секунд";
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            Thread.Sleep(3000);
+            stopwatch.Stop();
+
+            return $"Обработка {dataName} завершена за {stopwatch.Elapsed.TotalSeconds} секунд";
         }
 
         public static double SyncProcessData()
         {
-            DateTime start = DateTime.UtcNow;
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             string output1 = ProcessData("Файл 1");
             Console.WriteLine($"{output1}");
@@ -48,27 +51,27 @@
             string output3 = ProcessData("Файл 3");
             Console.WriteLine($"{output3}");
 
-            DateTime end = DateTime.UtcNow;
+            stopwatch.Stop();
 
-            double workTime = (end - start).TotalSeconds;
-            Console.WriteLine($"Суммарное время выполнения синхронных методов равно {workTime} секунд");
-            return workTime;
+            double timeOfWork = stopwatch.Elapsed.TotalSeconds;
+            Console.WriteLine($"Суммарное время выполнения синхронных методов равно {timeOfWork:F2} секунд");
+            return timeOfWork;
         }
 
         public async static Task<string> ProcessDataAsync(string dataName)
         {
             Console.WriteLine($"Начата обработка {dataName}");
 
-            DateTime start = DateTime.UtcNow;
+            Stopwatch stopwatch = Stopwatch.StartNew();
             await Task.Delay(3000);
-            DateTime end = DateTime.UtcNow;
+            stopwatch.Stop();
 
-            return $"Обработка {dataName} завершена за {(end - start).TotalSeconds} секунд";
+            return $"Обработка {dataName} завершена за {stopwatch.Elapsed.TotalSeconds} секунд";
         }
 
         public async static Task<double> ASyncProcessData()
         {
-            DateTime start = DateTime.UtcNow;
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             var task1 = ProcessDataAsync("Файл 1");
             var task2 = ProcessDataAsync("Файл 2");
@@ -81,9 +84,10 @@
                 Console.WriteLine(result);
             }
 
-            DateTime end = DateTime.UtcNow;
-            double workTime = (end - start).TotalSeconds;
-            Console.WriteLine($"Суммарное время выполнения асинхронных методов: {workTime} секунд");
+            stopwatch.Stop();
+
+            double workTime = stopwatch.Elapsed.TotalSeconds;
+            Console.WriteLine($"Суммарное время выполнения асинхронных методов: {workTime:F2} секунд");
 
             return workTime;
         }
